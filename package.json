@@ -1,0 +1,32 @@
+{
+  "name": "sequelize-find-unique",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "check": "tsc",
+    "lint": "eslint src",
+    "build": "rm -rf build && tsc --project tsconfig.build.json"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/json-stable-stringify": "^1.0.34",
+    "dataloader": "^2.1.0",
+    "json-stable-stringify": "^1.0.1"
+  },
+  "peerDependencies": {
+    "sequelize": "^6.20.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.5.1",
+    "@typescript-eslint/eslint-plugin": "^5.27.0",
+    "@typescript-eslint/parser": "^5.27.0",
+    "eslint": "^8.16.0",
+    "jest": "^28.1.0",
+    "sequelize": "^6.20.1",
+    "sqlite3": "^5.0.8",
+    "typescript": "^4.7.2"
+  }
+}

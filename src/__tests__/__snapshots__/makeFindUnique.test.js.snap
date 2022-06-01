@@ -1,0 +1,286 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`makeFindUnique batches queries correctly 1`] = `
+Array [
+  Array [
+    Array [
+      Object {
+        "attributes": Array [
+          "username",
+          "id",
+        ],
+        "where": Object {
+          "username": "kalle",
+        },
+      },
+      Object {
+        "attributes": Array [
+          "username",
+          "id",
+        ],
+        "where": Object {
+          "username": "elina",
+        },
+      },
+      Object {
+        "attributes": Array [
+          "username",
+          "id",
+        ],
+        "where": Object {
+          "username": "lasse",
+        },
+      },
+    ],
+  ],
+]
+`;
+
+exports[`makeFindUnique batches queries correctly 2`] = `
+Array [
+  Object {
+    "id": 1,
+    "username": "kalle",
+  },
+  Object {
+    "id": 2,
+    "username": "elina",
+  },
+  Object {
+    "id": 3,
+    "username": "lasse",
+  },
+]
+`;
+
+exports[`makeFindUnique batches queries correctly with composite unique columns 1`] = `
+Array [
+  Array [
+    Array [
+      Object {
+        "attributes": Array [
+          "id",
+          "firstName",
+          "lastName",
+        ],
+        "where": Object {
+          "firstName": "Kalle",
+          "lastName": "Ilves",
+        },
+      },
+      Object {
+        "attributes": Array [
+          "id",
+          "firstName",
+          "lastName",
+        ],
+        "where": Object {
+          "firstName": "John",
+          "lastName": "Doe",
+        },
+      },
+    ],
+  ],
+]
+`;
+
+exports[`makeFindUnique batches queries correctly with composite unique columns 2`] = `
+Array [
+  Object {
+    "firstName": "Kalle",
+    "id": 1,
+    "lastName": "Ilves",
+  },
+  Object {
+    "firstName": "John",
+    "id": 2,
+    "lastName": "Doe",
+  },
+]
+`;
+
+exports[`makeFindUnique queries with different include or attributes parameters are not in the same batch 1`] = `
+Array [
+  Array [
+    Array [
+      Object {
+        "attributes": Array [
+          "username",
+          "id",
+        ],
+        "include": Object {
+          "attributes": Array [
+            "id",
+            "content",
+          ],
+          "model": [Function],
+        },
+        "where": Object {
+          "username": "kalle",
+        },
+      },
+    ],
+  ],
+  Array [
+    Array [
+      Object {
+        "attributes": Array [
+          "username",
+        ],
+        "where": Object {
+          "username": "elina",
+        },
+      },
+    ],
+  ],
+]
+`;
+
+exports[`makeFindUnique queries with different include or attributes parameters are not in the same batch 2`] = `
+Array [
+  Object {
+    "comments": Array [
+      Object {
+        "content": "text 1",
+        "id": 1,
+      },
+    ],
+    "id": 1,
+    "username": "kalle",
+  },
+  Object {
+    "username": "elina",
+  },
+]
+`;
+
+exports[`makeFindUnique queries with different where parameters are not in the same batch 1`] = `
+Array [
+  Array [
+    Array [
+      Object {
+        "attributes": Array [
+          "username",
+          "id",
+        ],
+        "where": Object {
+          "username": "kalle",
+        },
+      },
+    ],
+  ],
+  Array [
+    Array [
+      Object {
+        "attributes": Array [
+          "username",
+          "id",
+        ],
+        "where": Object {
+          "id": 2,
+        },
+      },
+    ],
+  ],
+]
+`;
+
+exports[`makeFindUnique queries with different where parameters are not in the same batch 2`] = `
+Array [
+  Object {
+    "id": 1,
+    "username": "kalle",
+  },
+  Object {
+    "id": 2,
+    "username": "elina",
+  },
+]
+`;
+
+exports[`makeFindUnique queries with same include and attributes parameters are in the same batch 1`] = `
+Array [
+  Array [
+    Array [
+      Object {
+        "attributes": Array [
+          "username",
+          "id",
+        ],
+        "include": Object {
+          "attributes": Array [
+            "id",
+            "content",
+          ],
+          "model": [Function],
+        },
+        "where": Object {
+          "username": "kalle",
+        },
+      },
+      Object {
+        "attributes": Array [
+          "username",
+          "id",
+        ],
+        "include": Object {
+          "attributes": Array [
+            "id",
+            "content",
+          ],
+          "model": [Function],
+        },
+        "where": Object {
+          "username": "elina",
+        },
+      },
+      Object {
+        "attributes": Array [
+          "username",
+          "id",
+        ],
+        "include": Object {
+          "attributes": Array [
+            "id",
+            "content",
+          ],
+          "model": [Function],
+        },
+        "where": Object {
+          "username": "lasse",
+        },
+      },
+    ],
+  ],
+]
+`;
+
+exports[`makeFindUnique queries with same include and attributes parameters are in the same batch 2`] = `
+Array [
+  Object {
+    "comments": Array [
+      Object {
+        "content": "text 1",
+        "id": 1,
+      },
+    ],
+    "id": 1,
+    "username": "kalle",
+  },
+  Object {
+    "comments": Array [
+      Object {
+        "content": "text 2",
+        "id": 2,
+      },
+    ],
+    "id": 2,
+    "username": "elina",
+  },
+  Object {
+    "comments": Array [],
+    "id": 3,
+    "username": "lasse",
+  },
+]
+`;
