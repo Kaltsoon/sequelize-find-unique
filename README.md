@@ -1,5 +1,7 @@
 # sequelize-find-unique
 
+[![Test](https://github.com/Kaltsoon/sequelize-find-unique/actions/workflows/test.yml/badge.svg)](https://github.com/Kaltsoon/sequelize-find-unique/actions/workflows/test.yml)
+
 Retrieves a single Sequelize model entry by a unique column (or a combination of multiple columns). Multiple queries with same `where`, `attributes` and `include` parameters are automatically batched using a [dataloader](https://github.com/graphql/dataloader) and will result in a single database query. This can come in handy for example on a GraphQL server.
 
 This library is heavily inspired by [Prisma's](https://www.prisma.io/) `findUnique` method.
