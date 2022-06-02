@@ -1,10 +1,16 @@
 # 🦄 sequelize-find-unique
 
-[![Test](https://github.com/Kaltsoon/sequelize-find-unique/actions/workflows/test.yml/badge.svg)](https://github.com/Kaltsoon/sequelize-find-unique/actions/workflows/test.yml)
+[![Test](https://github.com/Kaltsoon/sequelize-find-unique/actions/workflows/test.yml/badge.svg)](https://github.com/Kaltsoon/sequelize-find-unique/actions/workflows/test.yml) [npm](https://img.shields.io/npm/v/sequelize-find-unique)
 
 Retrieves a single Sequelize model entry by a unique column or a unique combination of multiple columns. Multiple queries with the same `where`, `attributes`, and `include` parameters are automatically batched using a [dataloader](https://github.com/graphql/dataloader) and will result in a single database query. This is very useful, especially on a GraphQL server to avoid the [N+1 Problem](https://shopify.engineering/solving-the-n-1-problem-for-graphql-through-batching).
 
 This library is heavily inspired by [Prisma's](https://www.prisma.io/) `findUnique` method.
+
+## Installation
+
+```bash
+npm install sequelize-find-unique
+```
 
 ## How to use?
 
@@ -22,6 +28,8 @@ const User = sequelize.define('user', {
 });
 
 const findUniqueUser = makeFindUnique(User);
+
+// ...
 
 // These queries have the same columns in the where parameter, so they are batched. Just one database query is executed
 const users = await Promise.all([

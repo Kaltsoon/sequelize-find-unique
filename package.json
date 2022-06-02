@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "",
   "main": "index.js",
+  "keywords": ["sequelize", "dataloader", "unique", "batching"],
   "scripts": {
     "test": "jest",
     "check": "tsc",
@@ -17,7 +18,7 @@
     "json-stable-stringify": "^1.0.1"
   },
   "peerDependencies": {
-    "sequelize": "^6.20.1"
+    "sequelize": ">= 6.0.0"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.18.2",
