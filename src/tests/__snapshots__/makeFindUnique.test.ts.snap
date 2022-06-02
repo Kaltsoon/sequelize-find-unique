@@ -99,6 +99,13 @@ Array [
 ]
 `;
 
+exports[`makeFindUnique defining as a static model method works 1`] = `
+Object {
+  "id": 1,
+  "username": "kalle",
+}
+`;
+
 exports[`makeFindUnique queries with different include or attributes parameters are not in the same batch 1`] = `
 Array [
   Array [
@@ -109,6 +116,7 @@ Array [
           "id",
         ],
         "include": Object {
+          "as": "comments",
           "attributes": Array [
             "id",
             "content",
@@ -208,6 +216,7 @@ Array [
           "id",
         ],
         "include": Object {
+          "as": "comments",
           "attributes": Array [
             "id",
             "content",
@@ -224,6 +233,7 @@ Array [
           "id",
         ],
         "include": Object {
+          "as": "comments",
           "attributes": Array [
             "id",
             "content",
@@ -240,6 +250,7 @@ Array [
           "id",
         ],
         "include": Object {
+          "as": "comments",
           "attributes": Array [
             "id",
             "content",

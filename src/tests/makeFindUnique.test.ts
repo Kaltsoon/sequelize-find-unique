@@ -1,39 +1,5 @@
-import { Sequelize, DataTypes } from 'sequelize';
-
 import makeFindUnique from '../makeFindUnique';
-
-const sequelize = new Sequelize('sqlite::memory:');
-
-const User = sequelize.define('user', {
-  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  username: { type: DataTypes.TEXT, unique: true },
-});
-
-const Comment = sequelize.define('comment', {
-  id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  userId: { type: DataTypes.INTEGER },
-  content: { type: DataTypes.TEXT },
-});
-
-const Person = sequelize.define(
-  'person',
-  {
-    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    firstName: { type: DataTypes.INTEGER },
-    lastName: { type: DataTypes.INTEGER },
-  },
-  {
-    indexes: [
-      {
-        unique: true,
-        fields: ['firstName', 'lastName'],
-      },
-    ],
-  },
-);
-
-User.hasMany(Comment);
-Comment.belongsTo(User);
+import { sequelize, User, Comment, Person } from './models';
 
 describe('makeFindUnique', () => {
   beforeEach(async () => {
@@ -113,6 +79,21 @@ describe('makeFindUnique', () => {
     expect(result).toMatchSnapshot();
   });
 
+  it('defining as a static model method works', async () => {
+    User.findUnique = makeFindUnique(User);
+
+    User.create({ username: 'kalle' });
+
+    const user = await User.findUnique({
+      where: {
+        username: 'kalle',
+      },
+      attributes: ['id', 'username'],
+    });
+
+    expect(user).toMatchSnapshot();
+  });
+
   it('queries with same include and attributes parameters are in the same batch', async () => {
     const onLoadBatch = jest.fn();
 
@@ -135,21 +116,33 @@ describe('makeFindUnique', () => {
           username: 'kalle',
         },
         attributes: ['username', 'id'],
-        include: { model: Comment, attributes: ['id', 'content'] },
+        include: {
+          model: Comment,
+          attributes: ['id', 'content'],
+          as: 'comments',
+        },
       }),
       findUniqueUser({
         where: {
           username: 'elina',
         },
         attributes: ['username', 'id'],
-        include: { model: Comment, attributes: ['id', 'content'] },
+        include: {
+          model: Comment,
+          attributes: ['id', 'content'],
+          as: 'comments',
+        },
       }),
       findUniqueUser({
         where: {
           username: 'lasse',
         },
         attributes: ['username', 'id'],
-        include: { model: Comment, attributes: ['id', 'content'] },
+        include: {
+          model: Comment,
+          attributes: ['id', 'content'],
+          as: 'comments',
+        },
       }),
     ]);
 
@@ -178,7 +171,11 @@ describe('makeFindUnique', () => {
           username: 'kalle',
         },
         attributes: ['username', 'id'],
-        include: { model: Comment, attributes: ['id', 'content'] },
+        include: {
+          model: Comment,
+          attributes: ['id', 'content'],
+          as: 'comments',
+        },
       }),
       findUniqueUser({
         where: {

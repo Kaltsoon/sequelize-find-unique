@@ -2,7 +2,7 @@
 
 [![Test](https://github.com/Kaltsoon/sequelize-find-unique/actions/workflows/test.yml/badge.svg)](https://github.com/Kaltsoon/sequelize-find-unique/actions/workflows/test.yml)
 
-Retrieves a single Sequelize model entry by a unique column (or a combination of multiple columns). Multiple queries with same `where`, `attributes` and `include` parameters are automatically batched using a [dataloader](https://github.com/graphql/dataloader) and will result in a single database query. This can come in handy for example on a GraphQL server.
+Retrieves a single Sequelize model entry by a unique column or an unique combination of multiple columns. Multiple queries with same `where`, `attributes` and `include` parameters are automatically batched using a [dataloader](https://github.com/graphql/dataloader) and will result in a single database query. This is very useful, especially on a GraphQL server to avoid the [N+1 Problem](https://shopify.engineering/solving-the-n-1-problem-for-graphql-through-batching).
 
 This library is heavily inspired by [Prisma's](https://www.prisma.io/) `findUnique` method.
 
@@ -23,7 +23,7 @@ const User = sequelize.define('user', {
 
 const findUniqueUser = makeFindUnique(User);
 
-// These queries will be handled by a single database query
+// These queries have the same columns in the where parameter, so they are batched. Just one database query is executed
 const users = await Promise.all([
   findUniqueUser({
     where: {
@@ -40,20 +40,36 @@ const users = await Promise.all([
 
 The two `findUniqueUser` queries in the example are batched and only one database query is executed.
 
+### Using as model's static method
+
+The `findUnique` (or name of your choice) static method can be defined for model in the following way:
+
+```js
+User.findUnique = makeFindUnique(User);
+
+// ...
+
+const user = await User.findUnique({
+  where: {
+    username: 'kalle',
+  },
+});
+```
+
 ### Associations
 
 Queries with the same `include` parameter are batched:
 
 ```js
-// Queries have the same include parameter, so they are batched. Just one database query is executed
+// These queries have the same include parameter, so they are batched. Just one database query is executed
 const users = await Promise.all([
-  findUniqueUser({
+  User.findUnique({
     where: {
       username: 'john',
     },
     include: { model: Comment },
   }),
-  findUniqueUser({
+  User.findUnique({
     where: {
       username: 'mary',
     },
@@ -67,38 +83,39 @@ const users = await Promise.all([
 Composite unique columns work just like a single unique column:
 
 ```js
-const Person = sequelize.define(
-  'person',
-  {
-    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    firstName: { type: DataTypes.INTEGER },
-    lastName: { type: DataTypes.INTEGER },
-  },
-  {
-    indexes: [
-      {
-        unique: true,
-        fields: ['firstName', 'lastName'],
-      },
-    ],
-  },
-);
-
-const findUniquePerson = makeFindUnique(Person);
-
-// These queries will be handled by a single database query
+// These queries have the same columns in the where parameter, so they are batched. Just one database query is executed
 const persons = await Promise.all([
-  findUniquePerson({
+  Person.findUnique({
     where: {
       firstName: 'Kalle',
       lastName: 'Ilves',
     },
   }),
-  findUniquePerson({
+  Person.findUnique({
     where: {
       firstName: 'John',
       lastName: 'Doe',
     },
   }),
 ]);
+```
+
+### TypeScript
+
+The library is written in TypeScript, so types are on the house!
+
+If you are using a static method like in the previous examples, just declare the method on your model class:
+
+```ts
+export class User extends Model<
+  InferAttributes<User>,
+  InferCreationAttributes<User>
+> {
+  declare id: CreationOptional<number>;
+  declare username: string;
+
+  declare static findUnique: (
+    options: FindOptions<Attributes<User>>,
+  ) => Promise<User | null>;
+}
 ```

@@ -2,11 +2,21 @@ import { Model, FindOptions } from 'sequelize';
 import DataLoader, { BatchLoadFn } from 'dataloader';
 import { serializeQueryOptions } from './utils';
 
-class DataLoaderManager<ModelType extends Model> {
-  batchLoadFn: BatchLoadFn<FindOptions<any>, ModelType>;
-  loaderCache: Map<string, DataLoader<FindOptions<any>, ModelType>>;
+type ModelBatchLoadFn<ModelType extends Model> = BatchLoadFn<
+  FindOptions<any>,
+  ModelType | null
+>;
 
-  constructor(batchLoadFn: BatchLoadFn<FindOptions<any>, ModelType>) {
+type ModelDataLoader<ModelType extends Model> = DataLoader<
+  FindOptions<any>,
+  ModelType | null
+>;
+
+class DataLoaderManager<ModelType extends Model> {
+  batchLoadFn: ModelBatchLoadFn<ModelType>;
+  loaderCache: Map<string, ModelDataLoader<ModelType>>;
+
+  constructor(batchLoadFn: BatchLoadFn<FindOptions<any>, ModelType | null>) {
     this.batchLoadFn = batchLoadFn;
     this.loaderCache = new Map();
   }
@@ -14,9 +24,9 @@ class DataLoaderManager<ModelType extends Model> {
   cacheKeyFn = (queryOptions: FindOptions<any>): string =>
     serializeQueryOptions({ where: queryOptions.where });
 
-  getLoader(
+  getDataLoader(
     queryOptions: FindOptions<any>,
-  ): DataLoader<FindOptions<any>, ModelType> {
+  ): ModelDataLoader<ModelType> {
     const { where, ...restQueryOptions } = queryOptions;
 
     const cacheKey = serializeQueryOptions({

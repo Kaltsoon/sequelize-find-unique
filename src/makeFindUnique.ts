@@ -1,21 +1,24 @@
-import { FindOptions, ModelStatic } from 'sequelize';
+import { FindOptions, ModelStatic, Model, Attributes } from 'sequelize';
 import DataLoaderManager from './dataLoaderManager';
 import { findRowByWhere, getWhereQuery } from './utils';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const noop = () => {};
+const noop = () => {
+  return undefined;
+};
 
 interface MakeFindUniqueOptions {
   onLoadBatch: (keys: ReadonlyArray<FindOptions<any>>) => void;
 }
 
-const makeFindUnique = <ModelClass extends ModelStatic<any>>(
-  Model: ModelClass,
-  options: MakeFindUniqueOptions,
+const makeFindUnique = <ModelType extends Model>(
+  Model: ModelStatic<ModelType>,
+  options?: MakeFindUniqueOptions,
 ) => {
   const onLoadBatch = options?.onLoadBatch ?? noop;
 
-  const batchLoadFn = async (keys: ReadonlyArray<FindOptions<any>>) => {
+  const batchLoadFn = async (
+    keys: ReadonlyArray<FindOptions<any>>,
+  ): Promise<Array<ModelType | null>> => {
     onLoadBatch(keys);
 
     const whereQuery = getWhereQuery(keys);
@@ -33,12 +36,12 @@ const makeFindUnique = <ModelClass extends ModelStatic<any>>(
     );
   };
 
-  const manager = new DataLoaderManager(batchLoadFn);
+  const manager = new DataLoaderManager<ModelType>(batchLoadFn);
 
   const findUnique = (
-    queryOptions: FindOptions<any>,
-  ): Promise<InstanceType<ModelClass> | null> => {
-    const loader = manager.getLoader(queryOptions);
+    queryOptions: FindOptions<Attributes<ModelType>>,
+  ): Promise<ModelType | null> => {
+    const loader = manager.getDataLoader(queryOptions);
 
     return loader.load(queryOptions);
   };
