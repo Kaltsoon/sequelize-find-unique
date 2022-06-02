@@ -9,14 +9,21 @@
     "batching"
   ],
   "description": "Query batching with dataloader for Sequelize models",
+  "author": "Kaltsoon",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kaltsoon/sequelize-find-unique.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Kaltsoon/sequelize-find-unique/issues"
+  },
   "scripts": {
     "test": "jest",
     "check": "tsc",
     "lint": "eslint src",
     "build": "rm -rf build && tsc --project tsconfig.build.json"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "@types/json-stable-stringify": "^1.0.34",
     "dataloader": "^2.1.0",
