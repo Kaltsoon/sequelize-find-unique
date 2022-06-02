@@ -1,6 +1,6 @@
 # 🦄 sequelize-find-unique
 
-[![Test](https://github.com/Kaltsoon/sequelize-find-unique/actions/workflows/test.yml/badge.svg)](https://github.com/Kaltsoon/sequelize-find-unique/actions/workflows/test.yml) ![npm](https://img.shields.io/npm/v/sequelize-find-unique)
+[![Test](https://github.com/Kaltsoon/sequelize-find-unique/actions/workflows/test.yml/badge.svg)](https://github.com/Kaltsoon/sequelize-find-unique/actions/workflows/test.yml) [![npm](https://img.shields.io/npm/v/sequelize-find-unique)](https://www.npmjs.com/package/sequelize-find-unique)
 
 Finder for retrieving a single Sequelize model entry by a unique column or a unique combination of multiple columns. Queries that occur in the same tick and have the same `where`, `attributes`, and `include` parameters are automatically batched using a [dataloader](https://github.com/graphql/dataloader) and will result in a single database query. This is very useful, especially on a GraphQL server to avoid the [N+1 Problem](https://shopify.engineering/solving-the-n-1-problem-for-graphql-through-batching).
 
