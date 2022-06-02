@@ -1,6 +1,6 @@
 {
   "name": "sequelize-find-unique",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "index.js",
   "keywords": [
     "sequelize",
