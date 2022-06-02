@@ -24,9 +24,7 @@ class DataLoaderManager<ModelType extends Model> {
   cacheKeyFn = (queryOptions: FindOptions<any>): string =>
     serializeQueryOptions({ where: queryOptions.where });
 
-  getDataLoader(
-    queryOptions: FindOptions<any>,
-  ): ModelDataLoader<ModelType> {
+  getDataLoader(queryOptions: FindOptions<any>): ModelDataLoader<ModelType> {
     const { where, ...restQueryOptions } = queryOptions;
 
     const cacheKey = serializeQueryOptions({
@@ -48,11 +46,13 @@ class DataLoaderManager<ModelType extends Model> {
     const loadFn = loader.load;
 
     loader.load = async (key: FindOptions<any>) => {
-      const items = await loadFn.apply(loader, [key]);
+      try {
+        const item = await loadFn.apply(loader, [key]);
 
-      this.loaderCache.delete(cacheKey);
-
-      return items;
+        return item;
+      } finally {
+        this.loaderCache.delete(cacheKey);
+      }
     };
 
     this.loaderCache.set(cacheKey, loader);
