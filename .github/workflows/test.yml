@@ -3,7 +3,7 @@ name: Test
 on: [push]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -15,7 +15,7 @@ jobs:
         run: npm ci
       - name: Run lint
         run: npm run lint
-      - name: Run type checks 
+      - name: Run type checks
         run: npm run check
       - name: Run tests
         run: npm test

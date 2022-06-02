@@ -2,14 +2,22 @@
 
 [![Test](https://github.com/Kaltsoon/sequelize-find-unique/actions/workflows/test.yml/badge.svg)](https://github.com/Kaltsoon/sequelize-find-unique/actions/workflows/test.yml) ![npm](https://img.shields.io/npm/v/sequelize-find-unique)
 
-Retrieves a single Sequelize model entry by a unique column or a unique combination of multiple columns. Multiple queries with the same `where`, `attributes`, and `include` parameters are automatically batched using a [dataloader](https://github.com/graphql/dataloader) and will result in a single database query. This is very useful, especially on a GraphQL server to avoid the [N+1 Problem](https://shopify.engineering/solving-the-n-1-problem-for-graphql-through-batching).
+Finder for retrieving a single Sequelize model entry by a unique column or a unique combination of multiple columns. Queries that occur in the same tick and have the same `where`, `attributes`, and `include` parameters are automatically batched using a [dataloader](https://github.com/graphql/dataloader) and will result in a single database query. This is very useful, especially on a GraphQL server to avoid the [N+1 Problem](https://shopify.engineering/solving-the-n-1-problem-for-graphql-through-batching).
 
 This library is heavily inspired by [Prisma's](https://www.prisma.io/) `findUnique` method.
 
-## Installation
+## Install
+
+With npm:
 
 ```bash
 npm install sequelize-find-unique
+```
+
+With Yarn:
+
+```bash
+yarn add sequelize-find-unique
 ```
 
 ## How to use?
@@ -108,13 +116,15 @@ const persons = await Promise.all([
 ]);
 ```
 
-### TypeScript
+## TypeScript
 
 The library is written in TypeScript, so types are on the house!
 
 If you are using a static method like in the previous examples, just declare the method on your model class:
 
 ```ts
+import { makeFindUnique } from 'sequelize-find-unique';
+
 export class User extends Model<
   InferAttributes<User>,
   InferCreationAttributes<User>
@@ -126,4 +136,8 @@ export class User extends Model<
     options: FindOptions<Attributes<User>>,
   ) => Promise<User | null>;
 }
+
+// ...
+
+User.findUnique = makeFindUnique(User);
 ```

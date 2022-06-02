@@ -1,9 +1,14 @@
 {
   "name": "sequelize-find-unique",
   "version": "0.0.1",
-  "description": "",
   "main": "index.js",
-  "keywords": ["sequelize", "dataloader", "unique", "batching"],
+  "keywords": [
+    "sequelize",
+    "dataloader",
+    "unique",
+    "batching"
+  ],
+  "description": "Query batching with dataloader for Sequelize models",
   "scripts": {
     "test": "jest",
     "check": "tsc",

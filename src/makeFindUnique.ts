@@ -11,7 +11,7 @@ interface MakeFindUniqueOptions {
 }
 
 const makeFindUnique = <ModelType extends Model>(
-  Model: ModelStatic<ModelType>,
+  model: ModelStatic<ModelType>,
   options?: MakeFindUniqueOptions,
 ) => {
   const onLoadBatch = options?.onLoadBatch ?? noop;
@@ -26,7 +26,7 @@ const makeFindUnique = <ModelType extends Model>(
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { where, ...restQueryOptions } = keys[0];
 
-    const rows = await Model.findAll({
+    const rows = await model.findAll({
       where: whereQuery,
       ...restQueryOptions,
     });
