@@ -1,6 +1,6 @@
 import { FindOptions, ModelStatic, Model, Attributes } from 'sequelize';
 
-import DataLoaderManager from './dataLoaderManager';
+import DataLoaderManager, { ModelBatchLoadFn } from './dataLoaderManager';
 import { findRowByWhere, getWhereQuery } from './utils';
 import { FindUniqueOptions } from './types';
 
@@ -18,9 +18,7 @@ const makeFindUnique = <ModelType extends Model>(
 ) => {
   const onLoadBatch = options?.onLoadBatch ?? noop;
 
-  const batchLoadFn = async (
-    keys: ReadonlyArray<FindOptions<any>>,
-  ): Promise<Array<ModelType | null>> => {
+  const batchLoadFn: ModelBatchLoadFn<ModelType> = async (keys) => {
     onLoadBatch(keys);
 
     const whereQuery = getWhereQuery(keys);
