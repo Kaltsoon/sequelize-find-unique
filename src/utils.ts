@@ -41,7 +41,7 @@ export const isSequelizeModelClass = (
   return typeof value === 'function' && value.prototype instanceof Model;
 };
 
-export const isSequelizeOp = (value: unknown): value is Symbol => {
+export const isSequelizeOp = (value: unknown): value is symbol => {
   return OP_VALUES.includes(value);
 };
 

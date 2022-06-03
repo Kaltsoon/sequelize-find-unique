@@ -22,7 +22,7 @@ const serializers: Serializer[] = [
     serialize: (key: string, value: unknown) => {
       const symbols = Object.getOwnPropertySymbols(value);
 
-      const obj: any = { ...(value as Object) };
+      const obj: any = { ...(value as any) };
 
       for (const symbol of symbols) {
         if (!isSequelizeOp(symbol)) {
