@@ -1,5 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`serializeFindUniqueOptions serializes Op correctly 1`] = `"{\\"attributes\\":[\\"firstName\\",\\"lastName\\"],\\"include\\":[{\\"as\\":\\"comments\\",\\"model\\":\\"__model:comments\\",\\"where\\":{\\"__op:Symbol(or)\\":[{\\"id\\":{\\"__op:Symbol(gt)\\":5}},{\\"id\\":{\\"__op:Symbol(ne)\\":100}}]}}],\\"where\\":[\\"firstName\\",\\"lastName\\"]}"`;
+
 exports[`serializeFindUniqueOptions serializes fn correctly 1`] = `"{\\"attributes\\":[\\"firstName\\",\\"lastName\\",[{\\"args\\":[{\\"col\\":\\"column\\"}],\\"fn\\":\\"COUNT\\"},\\"column_alias\\"]],\\"where\\":[\\"firstName\\",\\"lastName\\"]}"`;
 
 exports[`serializeFindUniqueOptions serializes model references correctly 1`] = `"{\\"attributes\\":[\\"firstName\\",\\"lastName\\"],\\"include\\":[{\\"as\\":\\"comments\\",\\"model\\":\\"__model:comments\\"}],\\"where\\":[\\"firstName\\",\\"lastName\\"]}"`;

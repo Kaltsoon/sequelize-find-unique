@@ -1,5 +1,6 @@
-import serializeFindUniqueOptions from '../serializeFindUniqueOptions';
+import { Op } from 'sequelize';
 
+import serializeFindUniqueOptions from '../serializeFindUniqueOptions';
 import { sequelize, Comment } from './models';
 
 describe('serializeFindUniqueOptions', () => {
@@ -39,6 +40,27 @@ describe('serializeFindUniqueOptions', () => {
           'firstName',
           'lastName',
           [sequelize.fn('COUNT', sequelize.col('column')), 'column_alias'],
+        ],
+      }),
+    ).toMatchSnapshot();
+  });
+
+  test('serializes Op correctly', () => {
+    expect(
+      serializeFindUniqueOptions({
+        where: {
+          firstName: 'Kalle',
+          lastName: 'Ilves',
+        },
+        attributes: ['firstName', 'lastName'],
+        include: [
+          {
+            model: Comment,
+            as: 'comments',
+            where: {
+              [Op.or]: [{ id: { [Op.gt]: 5 } }, { id: { [Op.ne]: 100 } }],
+            },
+          },
         ],
       }),
     ).toMatchSnapshot();

@@ -2,6 +2,8 @@ import { Op, Model, WhereOptions, FindOptions, ModelStatic } from 'sequelize';
 
 import { Primitive } from './types';
 
+const OP_VALUES = Object.values(Op);
+
 export const findRowByWhere = <ModelType extends Model>(
   rows: ModelType[],
   where: WhereOptions,
@@ -37,6 +39,10 @@ export const isSequelizeModelClass = (
   value: unknown,
 ): value is ModelStatic<any> => {
   return typeof value === 'function' && value.prototype instanceof Model;
+};
+
+export const isSequelizeOp = (value: unknown): value is Symbol => {
+  return OP_VALUES.includes(value);
 };
 
 export const isPrimitive = (value: unknown): value is Primitive => {

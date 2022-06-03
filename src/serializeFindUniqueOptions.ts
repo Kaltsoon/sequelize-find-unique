@@ -1,12 +1,12 @@
 import { ModelStatic } from 'sequelize/types';
 import jsonStringify from 'json-stable-stringify';
 
-import { isSequelizeModelClass } from './utils';
+import { isSequelizeModelClass, isSequelizeOp } from './utils';
 import { FindUniqueOptions } from './types';
 
 interface Serializer {
   test: (key: string, value: unknown) => boolean;
-  serialize: (key: string, value: unknown) => string;
+  serialize: (key: string, value: unknown) => any;
 }
 
 const serializers: Serializer[] = [
@@ -14,6 +14,33 @@ const serializers: Serializer[] = [
     test: (key: string, value: unknown) => isSequelizeModelClass(value),
     serialize: (key: string, value: unknown) =>
       `__model:${(value as ModelStatic<any>).getTableName()}`,
+  },
+  {
+    test: (key: string, value: unknown) =>
+      Object.prototype.toString.call(value) === '[object Object]' &&
+      Object.getOwnPropertySymbols(value).length > 0,
+    serialize: (key: string, value: unknown) => {
+      const symbols = Object.getOwnPropertySymbols(value);
+
+      const obj: any = { ...(value as Object) };
+
+      for (const symbol of symbols) {
+        if (!isSequelizeOp(symbol)) {
+          throw new Error('Found non-operator symbol from findUnique options');
+        }
+
+        const symbolString = symbol.toString();
+
+        const name =
+          symbolString === 'Symbol()'
+            ? `Symbol(${Math.round(Math.random() * 10e9)})`
+            : symbolString;
+
+        obj[`__op:${name}`] = obj[symbol];
+      }
+
+      return obj;
+    },
   },
 ];
 
