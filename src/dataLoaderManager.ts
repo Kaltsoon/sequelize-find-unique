@@ -1,14 +1,21 @@
-import { Model, FindOptions } from 'sequelize';
+import { Model, Attributes } from 'sequelize';
 import DataLoader, { BatchLoadFn } from 'dataloader';
-import { serializeQueryOptions } from './utils';
 
-type ModelBatchLoadFn<ModelType extends Model> = BatchLoadFn<
-  FindOptions<any>,
+import serializeFindUniqueOptions from './serializeFindUniqueOptions';
+import serializeWhere from './serializeWhere';
+import { FindUniqueOptions } from './types';
+
+export type ModelDataLoaderKey<ModelType extends Model> = FindUniqueOptions<
+  Attributes<ModelType>
+>;
+
+export type ModelBatchLoadFn<ModelType extends Model> = BatchLoadFn<
+  ModelDataLoaderKey<ModelType>,
   ModelType | null
 >;
 
-type ModelDataLoader<ModelType extends Model> = DataLoader<
-  FindOptions<any>,
+export type ModelDataLoader<ModelType extends Model> = DataLoader<
+  ModelDataLoaderKey<ModelType>,
   ModelType | null
 >;
 
@@ -16,21 +23,18 @@ class DataLoaderManager<ModelType extends Model> {
   batchLoadFn: ModelBatchLoadFn<ModelType>;
   loaderCache: Map<string, ModelDataLoader<ModelType>>;
 
-  constructor(batchLoadFn: BatchLoadFn<FindOptions<any>, ModelType | null>) {
+  constructor(
+    batchLoadFn: BatchLoadFn<FindUniqueOptions<any>, ModelType | null>,
+  ) {
     this.batchLoadFn = batchLoadFn;
     this.loaderCache = new Map();
   }
 
-  cacheKeyFn = (queryOptions: FindOptions<any>): string =>
-    serializeQueryOptions({ where: queryOptions.where });
+  cacheKeyFn = (options: FindUniqueOptions<any>): string =>
+    serializeWhere(options.where);
 
-  getDataLoader(queryOptions: FindOptions<any>): ModelDataLoader<ModelType> {
-    const { where, ...restQueryOptions } = queryOptions;
-
-    const cacheKey = serializeQueryOptions({
-      where: where ? Object.keys(where) : undefined,
-      ...restQueryOptions,
-    });
+  getDataLoader(options: FindUniqueOptions<any>): ModelDataLoader<ModelType> {
+    const cacheKey = serializeFindUniqueOptions(options);
 
     const cachedLoader = this.loaderCache.get(cacheKey);
 
@@ -45,7 +49,7 @@ class DataLoaderManager<ModelType extends Model> {
 
     const loadFn = loader.load;
 
-    loader.load = async (key: FindOptions<any>) => {
+    loader.load = async (key: ModelDataLoaderKey<ModelType>) => {
       try {
         const item = await loadFn.apply(loader, [key]);
 

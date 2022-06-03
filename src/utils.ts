@@ -1,5 +1,6 @@
-import { Op, Model, WhereOptions, FindOptions } from 'sequelize';
-import jsonStringify from 'json-stable-stringify';
+import { Op, Model, WhereOptions, FindOptions, ModelStatic } from 'sequelize';
+
+import { Primitive } from './types';
 
 export const findRowByWhere = <ModelType extends Model>(
   rows: ModelType[],
@@ -32,14 +33,18 @@ export const getWhereQuery = (
   return where;
 };
 
-const serializeReplacer = (key: string, value: any): string => {
-  if (typeof value === 'function' && value.prototype instanceof Model) {
-    return `__model:${value.getTableName()}`;
-  }
-
-  return value;
+export const isSequelizeModelClass = (
+  value: unknown,
+): value is ModelStatic<any> => {
+  return typeof value === 'function' && value.prototype instanceof Model;
 };
 
-export const serializeQueryOptions = (queryOptions: any): string => {
-  return jsonStringify(queryOptions, { replacer: serializeReplacer });
+export const isPrimitive = (value: unknown): value is Primitive => {
+  return (
+    typeof value === 'string' ||
+    typeof value === 'number' ||
+    typeof value === 'boolean' ||
+    typeof value === 'undefined' ||
+    value === null
+  );
 };

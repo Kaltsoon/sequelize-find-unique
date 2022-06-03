@@ -1,6 +1,8 @@
 import { FindOptions, ModelStatic, Model, Attributes } from 'sequelize';
+
 import DataLoaderManager from './dataLoaderManager';
 import { findRowByWhere, getWhereQuery } from './utils';
+import { FindUniqueOptions } from './types';
 
 const noop = () => {
   return undefined;
@@ -23,12 +25,12 @@ const makeFindUnique = <ModelType extends Model>(
 
     const whereQuery = getWhereQuery(keys);
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { where, ...restQueryOptions } = keys[0];
+    const { include, attributes } = keys[0];
 
     const rows = await model.findAll({
       where: whereQuery,
-      ...restQueryOptions,
+      include,
+      attributes,
     });
 
     return keys.map((key) =>
@@ -39,7 +41,7 @@ const makeFindUnique = <ModelType extends Model>(
   const manager = new DataLoaderManager<ModelType>(batchLoadFn);
 
   const findUnique = (
-    queryOptions: FindOptions<Attributes<ModelType>>,
+    queryOptions: FindUniqueOptions<Attributes<ModelType>>,
   ): Promise<ModelType | null> => {
     const loader = manager.getDataLoader(queryOptions);
 

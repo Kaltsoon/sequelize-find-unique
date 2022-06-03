@@ -9,6 +9,8 @@ import {
   FindOptions,
 } from 'sequelize';
 
+import { FindUniqueOptions } from '../types';
+
 export const sequelize = new Sequelize('sqlite::memory:');
 
 export class User extends Model<
@@ -19,7 +21,7 @@ export class User extends Model<
   declare username: string;
 
   declare static findUnique: (
-    options: FindOptions<Attributes<User>>,
+    options: FindUniqueOptions<Attributes<User>>,
   ) => Promise<User | null>;
 }
 

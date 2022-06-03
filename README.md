@@ -123,7 +123,7 @@ The library is written in TypeScript, so types are on the house!
 If you are using a static method like in the previous examples, just declare the method on your model class:
 
 ```ts
-import { makeFindUnique } from 'sequelize-find-unique';
+import { makeFindUnique, FindUniqueOptions } from 'sequelize-find-unique';
 
 export class User extends Model<
   InferAttributes<User>,
@@ -133,7 +133,7 @@ export class User extends Model<
   declare username: string;
 
   declare static findUnique: (
-    options: FindOptions<Attributes<User>>,
+    options: FindUniqueOptions<Attributes<User>>,
   ) => Promise<User | null>;
 }
 
