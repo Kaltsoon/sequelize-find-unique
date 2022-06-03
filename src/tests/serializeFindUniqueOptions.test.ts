@@ -51,7 +51,13 @@ describe('serializeFindUniqueOptions', () => {
           firstName: 'Kalle',
           lastName: 'Ilves',
         },
-        attributes: ['firstName', 'lastName', function () {}] as any,
+        attributes: [
+          'firstName',
+          'lastName',
+          () => {
+            return undefined;
+          },
+        ] as any,
       }),
     ).toThrowErrorMatchingSnapshot();
   });

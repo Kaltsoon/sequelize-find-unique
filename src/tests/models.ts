@@ -6,7 +6,6 @@ import {
   InferCreationAttributes,
   CreationOptional,
   Attributes,
-  FindOptions,
 } from 'sequelize';
 
 import { FindUniqueOptions } from '../types';
