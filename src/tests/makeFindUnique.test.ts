@@ -105,7 +105,7 @@ describe('makeFindUnique', () => {
       { username: 'lasse', id: 3 },
     ]);
 
-    Comment.bulkCreate([
+    await Comment.bulkCreate([
       { content: 'text 1', userId: 1 },
       { content: 'text 2', userId: 2 },
     ]);
@@ -163,7 +163,7 @@ describe('makeFindUnique', () => {
       { username: 'elina', id: 2 },
     ]);
 
-    Comment.bulkCreate([{ content: 'text 1', userId: 1 }]);
+    await Comment.bulkCreate([{ content: 'text 1', userId: 1 }]);
 
     const result = await Promise.all([
       findUniqueUser({
@@ -202,7 +202,7 @@ describe('makeFindUnique', () => {
       { username: 'elina', id: 2 },
     ]);
 
-    Comment.bulkCreate([{ content: 'text 1', userId: 1 }]);
+    await Comment.bulkCreate([{ content: 'text 1', userId: 1 }]);
 
     const result = await Promise.all([
       findUniqueUser({

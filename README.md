@@ -72,6 +72,30 @@ const user = await User.findUnique({
 });
 ```
 
+### Attributes
+
+Queries with the same `attributes` parameter are batched:
+
+```js
+// These queries have the same attributes parameter, so they are batched. Just one database query is executed
+const users = await Promise.all([
+  User.findUnique({
+    where: {
+      username: 'john',
+    },
+    attributes: ['username'],
+  }),
+  User.findUnique({
+    where: {
+      username: 'mary',
+    },
+    attributes: ['username'],
+  }),
+]);
+```
+
+Note that, if the `attributes` parameter is provided, columns used in the `where` parameter **must be present** in the `attributes` parameter.
+
 ### Associations
 
 Queries with the same `include` parameter are batched:
