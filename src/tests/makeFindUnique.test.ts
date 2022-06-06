@@ -285,6 +285,8 @@ describe('makeFindUnique', () => {
   it('clears cache after failed query', async () => {
     const cache = new Cache();
 
+    jest.spyOn(cache, 'delete');
+
     const findUniqueUser = makeFindUnique(User, { cache });
 
     await User.create({ username: 'kalle' });
@@ -299,5 +301,6 @@ describe('makeFindUnique', () => {
     ).rejects.toThrow();
 
     expect(cache.cache.size).toBe(0);
+    expect(cache.delete).toHaveBeenCalledTimes(1);
   });
 });
