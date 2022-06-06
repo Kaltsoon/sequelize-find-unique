@@ -150,11 +150,11 @@ Both functions receive the options provided for the `findUnique` function and sh
 
 ```js
 const customSerializeBatchKey = (options) => {
-  return JSON.stringify(options.attributes ?? []);
+  return JSON.stringify(Object.keys(options.where));
 };
 
 const customSerializeLoadKey = (options) => {
-  return JSON.stringify(Object.keys(options.where));
+  return JSON.stringify(options.where);
 };
 
 User.findUnique = makeFindUnique(User, {
