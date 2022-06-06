@@ -1,8 +1,8 @@
 import { Model, Attributes } from 'sequelize';
 import DataLoader, { BatchLoadFn } from 'dataloader';
 
-import serializeFindUniqueOptions from './serializeFindUniqueOptions';
-import serializeWhere from './serializeWhere';
+import serializeBatchKey from './serializeBatchKey';
+import serializeLoadKey from './serializeLoadKey';
 import { FindUniqueOptions } from './types';
 
 export type ModelDataLoaderKey<ModelType extends Model> = FindUniqueOptions<
@@ -53,10 +53,6 @@ export class Cache<ModelType extends Model>
   }
 }
 
-const serializeWhereFromOptions = <ModelType extends Model>(
-  options: FindUniqueOptions<ModelType>,
-): string => serializeWhere(options.where);
-
 class DataLoaderManager<ModelType extends Model> {
   batchLoadFn: ModelBatchLoadFn<ModelType>;
   cache: DataLoaderCache<ModelType>;
@@ -69,12 +65,8 @@ class DataLoaderManager<ModelType extends Model> {
   ) {
     this.batchLoadFn = batchLoadFn;
     this.cache = options?.cache ?? new Cache();
-
-    this.serializeBatchKey =
-      options?.serializeBatchKey ?? serializeFindUniqueOptions;
-
-    this.serializeLoadKey =
-      options?.serializeLoadKey ?? serializeWhereFromOptions;
+    this.serializeBatchKey = options?.serializeBatchKey ?? serializeBatchKey;
+    this.serializeLoadKey = options?.serializeLoadKey ?? serializeLoadKey;
   }
 
   getDataLoader(options: FindUniqueOptions<any>): ModelDataLoader<ModelType> {

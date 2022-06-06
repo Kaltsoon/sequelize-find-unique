@@ -2,13 +2,16 @@ import { WhereOptions } from 'sequelize';
 import jsonStringify from 'json-stable-stringify';
 
 import { isPrimitive } from './utils';
+import { FindUniqueOptions } from './types';
 
-const parseWhere = (value: unknown): WhereOptions => {
-  if (typeof value !== 'object' || value === null) {
+const parseWhere = (options: FindUniqueOptions<any>): WhereOptions => {
+  if (!options.where || typeof options.where !== 'object') {
     throw new Error('Where parameter must be an object');
   }
 
-  const entries = Object.entries(value);
+  const { where } = options;
+
+  const entries = Object.entries(where);
 
   for (const [key, value] of entries) {
     if (!isPrimitive(value)) {
@@ -18,13 +21,13 @@ const parseWhere = (value: unknown): WhereOptions => {
     }
   }
 
-  return value as WhereOptions;
+  return where;
 };
 
-const serializeWhere = (maybeWhere: unknown): string => {
-  const where = parseWhere(maybeWhere);
+const serializeLoadKey = (options: FindUniqueOptions<any>): string => {
+  const where = parseWhere(options);
 
   return jsonStringify(where);
 };
 
-export default serializeWhere;
+export default serializeLoadKey;

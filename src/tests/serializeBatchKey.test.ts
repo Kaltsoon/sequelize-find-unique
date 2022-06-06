@@ -1,12 +1,12 @@
 import { Op } from 'sequelize';
 
-import serializeFindUniqueOptions from '../serializeFindUniqueOptions';
+import serializeBatchKey from '../serializeBatchKey';
 import { sequelize, Comment } from './models';
 
-describe('serializeFindUniqueOptions', () => {
+describe('serializeBatchKey', () => {
   test('serializes primitive values correctly', () => {
     expect(
-      serializeFindUniqueOptions({
+      serializeBatchKey({
         where: {
           firstName: 'Kalle',
           lastName: 'Ilves',
@@ -18,7 +18,7 @@ describe('serializeFindUniqueOptions', () => {
 
   test('serializes model references correctly', () => {
     expect(
-      serializeFindUniqueOptions({
+      serializeBatchKey({
         where: {
           firstName: 'Kalle',
           lastName: 'Ilves',
@@ -31,7 +31,7 @@ describe('serializeFindUniqueOptions', () => {
 
   test('serializes fn correctly', () => {
     expect(
-      serializeFindUniqueOptions({
+      serializeBatchKey({
         where: {
           firstName: 'Kalle',
           lastName: 'Ilves',
@@ -47,7 +47,7 @@ describe('serializeFindUniqueOptions', () => {
 
   test('serializes Op correctly', () => {
     expect(
-      serializeFindUniqueOptions({
+      serializeBatchKey({
         where: {
           firstName: 'Kalle',
           lastName: 'Ilves',
@@ -68,7 +68,7 @@ describe('serializeFindUniqueOptions', () => {
 
   test('throws error for non-serializable values', () => {
     expect(() =>
-      serializeFindUniqueOptions({
+      serializeBatchKey({
         where: {
           firstName: 'Kalle',
           lastName: 'Ilves',

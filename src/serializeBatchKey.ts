@@ -1,4 +1,4 @@
-import { ModelStatic } from 'sequelize/types';
+import { ModelStatic } from 'sequelize';
 import jsonStringify from 'json-stable-stringify';
 
 import { isSequelizeModelClass, isSequelizeOp } from './utils';
@@ -58,9 +58,7 @@ const serializeReplacer = (key: string, value: unknown): unknown => {
   return value;
 };
 
-const serializeFindUniqueOptions = (
-  options: FindUniqueOptions<any>,
-): string => {
+const serializeBatchKey = (options: FindUniqueOptions<any>): string => {
   const { where, include, attributes } = options;
 
   const whereKeys = where ? Object.keys(where) : [];
@@ -71,4 +69,4 @@ const serializeFindUniqueOptions = (
   );
 };
 
-export default serializeFindUniqueOptions;
+export default serializeBatchKey;

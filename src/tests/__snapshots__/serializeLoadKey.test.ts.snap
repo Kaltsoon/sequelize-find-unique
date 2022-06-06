@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`serializeLoadKey ignores non-where parameters 1`] = `"{\\"firstName\\":\\"Kalle\\",\\"lastName\\":\\"Ilves\\"}"`;
+
+exports[`serializeLoadKey serializes primitive values correctly 1`] = `"{\\"firstName\\":\\"Kalle\\",\\"lastName\\":\\"Ilves\\"}"`;
+
+exports[`serializeLoadKey throws error for non-primitive values 1`] = `"Where parameter properties can only contain serializable primitive values. Found value of type \\"object\\" in property \\"friends\\""`;

@@ -1,5 +1,0 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
-
-exports[`serializeFindUniqueOptions serializes primitive values correctly 1`] = `"{\\"firstName\\":\\"Kalle\\",\\"lastName\\":\\"Ilves\\"}"`;
-
-exports[`serializeFindUniqueOptions throws error for non-primitive values 1`] = `"Where parameter properties can only contain serializable primitive values. Found value of type \\"object\\" in property \\"friends\\""`;
