@@ -165,7 +165,7 @@ User.findUnique = makeFindUnique(User, {
 
 ### Custom cache
 
-The `cache` option can be used to provide a custom DataLoader cache implementation. The cache keys are string and values [DataLoader](https://github.com/graphql/dataloader#api) instances. The cache implementation should implement `get`, `set`, and `delete` methods:
+The `cache` option can be used to provide a custom DataLoader cache implementation. The cache keys are strings and values [DataLoader](https://github.com/graphql/dataloader#api) instances. The cache implementation should implement `get`, `set`, and `delete` methods:
 
 ```js
 class CustomCache {
