@@ -2,7 +2,7 @@ import { FindOptions, ModelStatic, Model, Attributes } from 'sequelize';
 
 import DataLoaderManager, {
   ModelBatchLoadFn,
-  DataLoaderManagerOptions,
+  DataLoaderCache,
 } from './dataLoaderManager';
 
 import { findRowByWhere, getWhereQuery } from './utils';
@@ -13,8 +13,12 @@ const noop = () => {
 };
 
 export interface MakeFindUniqueOptions<ModelType extends Model> {
-  onLoadBatch?: (keys: ReadonlyArray<FindOptions<any>>) => void;
-  cache?: DataLoaderManagerOptions<ModelType>['cache'];
+  onLoadBatch?: (
+    keys: ReadonlyArray<FindOptions<Attributes<ModelType>>>,
+  ) => void;
+  cache?: DataLoaderCache<ModelType>;
+  serializeBatchKey?: (options: FindUniqueOptions<ModelType>) => string;
+  serializeLoadKey?: (options: FindUniqueOptions<ModelType>) => string;
 }
 
 const makeFindUnique = <ModelType extends Model>(

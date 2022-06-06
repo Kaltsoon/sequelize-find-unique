@@ -1,5 +1,6 @@
-import makeFindUnique, { MakeFindUniqueOptions } from '../makeFindUnique';
+import makeFindUnique from '../makeFindUnique';
 import { sequelize, User, Comment, Person } from './models';
+import { Cache } from '../dataLoaderManager';
 
 describe('makeFindUnique', () => {
   beforeEach(async () => {
@@ -227,7 +228,7 @@ describe('makeFindUnique', () => {
   });
 
   it('calls cache methods corrrectly', async () => {
-    const cache: MakeFindUniqueOptions<User>['cache'] = new Map();
+    const cache = new Cache();
 
     jest.spyOn(cache, 'get');
 
@@ -254,7 +255,9 @@ describe('makeFindUnique', () => {
   });
 
   it('clears cache after successful query', async () => {
-    const cache: MakeFindUniqueOptions<User>['cache'] = new Map();
+    const cache = new Cache();
+
+    jest.spyOn(cache, 'delete');
 
     const findUniqueUser = makeFindUnique(User, { cache });
 
@@ -275,11 +278,12 @@ describe('makeFindUnique', () => {
       }),
     ]);
 
-    expect(cache.size).toBe(0);
+    expect(cache.cache.size).toBe(0);
+    expect(cache.delete).toHaveBeenCalledTimes(2);
   });
 
   it('clears cache after failed query', async () => {
-    const cache: MakeFindUniqueOptions<User>['cache'] = new Map();
+    const cache = new Cache();
 
     const findUniqueUser = makeFindUnique(User, { cache });
 
@@ -294,6 +298,6 @@ describe('makeFindUnique', () => {
       }),
     ).rejects.toThrow();
 
-    expect(cache.size).toBe(0);
+    expect(cache.cache.size).toBe(0);
   });
 });

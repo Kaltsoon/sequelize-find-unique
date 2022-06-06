@@ -140,6 +140,55 @@ const persons = await Promise.all([
 ]);
 ```
 
+### Custom serializers
+
+Serializers can be used to customize the batching behavior. The `serializeBatchKey` option can be used to customize which queries go to the same batch. That is, queries that occur on the same tick will be batched based on the string key returned by the `serializeBatchKey`. The default `serializeBatchKey` serializer serializes the columns in the `where` parameter, the `attributes` parameter, and the `include` parameter.
+
+The `serielizeLoadKey` option can be used to customize the DataLoader's [cacheKeyFn](https://github.com/graphql/dataloader#api) function. The default `serielizeLoadKey` serializer serializes the `where` parameter.
+
+Both functions receive the options provided for the `findUnique` function and should return a string. The `serializeBatchKey` and `serializeLoadKey` can be provided using the second argument, the options object, of the `makeFindUnique` function:
+
+```js
+const customSerializeBatchKey = (options) => {
+  return JSON.stringify(options.attributes ?? []);
+};
+
+const customSerializeLoadKey = (options) => {
+  return JSON.stringify(Object.keys(options.where));
+};
+
+User.findUnique = makeFindUnique(User, {
+  serializeBatchKey: customSerializeBatchKey,
+  serializeLoadKey: customSerializeLoadKey,
+});
+```
+
+### Custom cache
+
+The `cache` option can be used to provide a custom DataLoader cache implementation. The cache keys are string and values [DataLoader](https://github.com/graphql/dataloader#api) instances. The cache implementation should implement `get`, `set`, and `delete` methods:
+
+```js
+class CustomCache {
+  get(key) {
+    // ...
+  }
+
+  set(key, value) {
+    // ...
+  }
+
+  delete(key) {
+    // ...
+  }
+}
+
+User.findUnique = makeFindUnique(User, {
+  cache: new CustomCache(),
+});
+```
+
+The default cache implementation is a simple wrapper around [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map).
+
 ## TypeScript
 
 The library is written in TypeScript, so types are on the house!

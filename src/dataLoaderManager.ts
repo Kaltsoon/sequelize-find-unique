@@ -19,32 +19,66 @@ export type ModelDataLoader<ModelType extends Model> = DataLoader<
   ModelType | null
 >;
 
-export type ModelDataLoaderCache<ModelType extends Model> = Map<
-  string,
-  ModelDataLoader<ModelType>
->;
+export interface DataLoaderCache<ModelType extends Model> {
+  get(key: string): ModelDataLoader<ModelType> | undefined;
+  set(key: string, value: ModelDataLoader<ModelType>): void;
+  delete(key: string): void;
+}
 
 export interface DataLoaderManagerOptions<ModelType extends Model> {
-  cache?: ModelDataLoaderCache<ModelType>;
+  cache?: DataLoaderCache<ModelType>;
+  serializeBatchKey?: (options: FindUniqueOptions<ModelType>) => string;
+  serializeLoadKey?: (options: FindUniqueOptions<ModelType>) => string;
 }
+
+export class Cache<ModelType extends Model>
+  implements DataLoaderCache<ModelType>
+{
+  cache: Map<string, ModelDataLoader<ModelType>>;
+
+  constructor() {
+    this.cache = new Map();
+  }
+
+  get(key: string) {
+    return this.cache.get(key);
+  }
+
+  set(key: string, value: ModelDataLoader<ModelType>) {
+    this.cache.set(key, value);
+  }
+
+  delete(key: string) {
+    this.cache.delete(key);
+  }
+}
+
+const serializeWhereFromOptions = <ModelType extends Model>(
+  options: FindUniqueOptions<ModelType>,
+): string => serializeWhere(options.where);
 
 class DataLoaderManager<ModelType extends Model> {
   batchLoadFn: ModelBatchLoadFn<ModelType>;
-  cache: Map<string, ModelDataLoader<ModelType>>;
+  cache: DataLoaderCache<ModelType>;
+  serializeBatchKey: (options: FindUniqueOptions<ModelType>) => string;
+  serializeLoadKey: (options: FindUniqueOptions<ModelType>) => string;
 
   constructor(
     batchLoadFn: ModelBatchLoadFn<ModelType>,
     options?: DataLoaderManagerOptions<ModelType>,
   ) {
     this.batchLoadFn = batchLoadFn;
-    this.cache = options?.cache ?? new Map();
+    this.cache = options?.cache ?? new Cache();
+
+    this.serializeBatchKey =
+      options?.serializeBatchKey ?? serializeFindUniqueOptions;
+
+    this.serializeLoadKey =
+      options?.serializeLoadKey ?? serializeWhereFromOptions;
   }
 
-  cacheKeyFn = (options: FindUniqueOptions<any>): string =>
-    serializeWhere(options.where);
-
   getDataLoader(options: FindUniqueOptions<any>): ModelDataLoader<ModelType> {
-    const cacheKey = serializeFindUniqueOptions(options);
+    const cacheKey = this.serializeBatchKey(options);
 
     const cachedLoader = this.cache.get(cacheKey);
 
@@ -54,7 +88,7 @@ class DataLoaderManager<ModelType extends Model> {
 
     const loader = new DataLoader(this.batchLoadFn, {
       cache: false,
-      cacheKeyFn: this.cacheKeyFn,
+      cacheKeyFn: this.serializeLoadKey,
     });
 
     const loadFn = loader.load;
