@@ -19,15 +19,25 @@ export type ModelDataLoader<ModelType extends Model> = DataLoader<
   ModelType | null
 >;
 
+export type ModelDataLoaderCache<ModelType extends Model> = Map<
+  string,
+  ModelDataLoader<ModelType>
+>;
+
+export interface DataLoaderManagerOptions<ModelType extends Model> {
+  cache?: ModelDataLoaderCache<ModelType>;
+}
+
 class DataLoaderManager<ModelType extends Model> {
   batchLoadFn: ModelBatchLoadFn<ModelType>;
-  loaderCache: Map<string, ModelDataLoader<ModelType>>;
+  cache: Map<string, ModelDataLoader<ModelType>>;
 
   constructor(
-    batchLoadFn: BatchLoadFn<FindUniqueOptions<any>, ModelType | null>,
+    batchLoadFn: ModelBatchLoadFn<ModelType>,
+    options?: DataLoaderManagerOptions<ModelType>,
   ) {
     this.batchLoadFn = batchLoadFn;
-    this.loaderCache = new Map();
+    this.cache = options?.cache ?? new Map();
   }
 
   cacheKeyFn = (options: FindUniqueOptions<any>): string =>
@@ -36,7 +46,7 @@ class DataLoaderManager<ModelType extends Model> {
   getDataLoader(options: FindUniqueOptions<any>): ModelDataLoader<ModelType> {
     const cacheKey = serializeFindUniqueOptions(options);
 
-    const cachedLoader = this.loaderCache.get(cacheKey);
+    const cachedLoader = this.cache.get(cacheKey);
 
     if (cachedLoader) {
       return cachedLoader;
@@ -55,11 +65,11 @@ class DataLoaderManager<ModelType extends Model> {
 
         return item;
       } finally {
-        this.loaderCache.delete(cacheKey);
+        this.cache.delete(cacheKey);
       }
     };
 
-    this.loaderCache.set(cacheKey, loader);
+    this.cache.set(cacheKey, loader);
 
     return loader;
   }

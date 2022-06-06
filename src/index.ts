@@ -1,2 +1,6 @@
-export { default as makeFindUnique } from './makeFindUnique';
+export {
+  default as makeFindUnique,
+  MakeFindUniqueOptions,
+} from './makeFindUnique';
+
 export { FindUniqueOptions } from './types';

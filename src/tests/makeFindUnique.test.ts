@@ -1,4 +1,4 @@
-import makeFindUnique from '../makeFindUnique';
+import makeFindUnique, { MakeFindUniqueOptions } from '../makeFindUnique';
 import { sequelize, User, Comment, Person } from './models';
 
 describe('makeFindUnique', () => {
@@ -11,7 +11,7 @@ describe('makeFindUnique', () => {
 
     const findUniqueUser = makeFindUnique(User, { onLoadBatch });
 
-    User.bulkCreate([
+    await User.bulkCreate([
       { username: 'kalle' },
       { username: 'elina' },
       { username: 'lasse' },
@@ -50,7 +50,7 @@ describe('makeFindUnique', () => {
 
     const findUniquePerson = makeFindUnique(Person, { onLoadBatch });
 
-    Person.bulkCreate([
+    await Person.bulkCreate([
       { firstName: 'Kalle', lastName: 'Ilves' },
       { firstName: 'John', lastName: 'Doe' },
     ]);
@@ -82,7 +82,7 @@ describe('makeFindUnique', () => {
   it('defining as a static model method works', async () => {
     User.findUnique = makeFindUnique(User);
 
-    User.create({ username: 'kalle' });
+    await User.create({ username: 'kalle' });
 
     const user = await User.findUnique({
       where: {
@@ -99,7 +99,7 @@ describe('makeFindUnique', () => {
 
     const findUniqueUser = makeFindUnique(User, { onLoadBatch });
 
-    User.bulkCreate([
+    await User.bulkCreate([
       { username: 'kalle', id: 1 },
       { username: 'elina', id: 2 },
       { username: 'lasse', id: 3 },
@@ -158,7 +158,7 @@ describe('makeFindUnique', () => {
 
     const findUniqueUser = makeFindUnique(User, { onLoadBatch });
 
-    User.bulkCreate([
+    await User.bulkCreate([
       { username: 'kalle', id: 1 },
       { username: 'elina', id: 2 },
     ]);
@@ -197,7 +197,7 @@ describe('makeFindUnique', () => {
 
     const findUniqueUser = makeFindUnique(User, { onLoadBatch });
 
-    User.bulkCreate([
+    await User.bulkCreate([
       { username: 'kalle', id: 1 },
       { username: 'elina', id: 2 },
     ]);
@@ -224,5 +224,76 @@ describe('makeFindUnique', () => {
     expect(onLoadBatch).toHaveBeenCalledTimes(2);
     expect(calls).toMatchSnapshot();
     expect(result).toMatchSnapshot();
+  });
+
+  it('calls cache methods corrrectly', async () => {
+    const cache: MakeFindUniqueOptions<User>['cache'] = new Map();
+
+    jest.spyOn(cache, 'get');
+
+    const findUniqueUser = makeFindUnique(User, { cache });
+
+    await User.bulkCreate([{ username: 'kalle' }, { username: 'elina' }]);
+
+    await Promise.all([
+      findUniqueUser({
+        where: {
+          username: 'kalle',
+        },
+        attributes: ['username', 'id'],
+      }),
+      findUniqueUser({
+        where: {
+          username: 'elina',
+        },
+        attributes: ['username', 'id'],
+      }),
+    ]);
+
+    expect(cache.get).toHaveBeenCalledTimes(2);
+  });
+
+  it('clears cache after successful query', async () => {
+    const cache: MakeFindUniqueOptions<User>['cache'] = new Map();
+
+    const findUniqueUser = makeFindUnique(User, { cache });
+
+    await User.bulkCreate([{ username: 'kalle' }, { username: 'elina' }]);
+
+    await Promise.all([
+      findUniqueUser({
+        where: {
+          username: 'kalle',
+        },
+        attributes: ['username', 'id'],
+      }),
+      findUniqueUser({
+        where: {
+          username: 'elina',
+        },
+        attributes: ['username', 'id'],
+      }),
+    ]);
+
+    expect(cache.size).toBe(0);
+  });
+
+  it('clears cache after failed query', async () => {
+    const cache: MakeFindUniqueOptions<User>['cache'] = new Map();
+
+    const findUniqueUser = makeFindUnique(User, { cache });
+
+    await User.create({ username: 'kalle' });
+
+    await expect(
+      findUniqueUser({
+        where: {
+          username: 'kalle',
+        },
+        attributes: ['age'],
+      }),
+    ).rejects.toThrow();
+
+    expect(cache.size).toBe(0);
   });
 });

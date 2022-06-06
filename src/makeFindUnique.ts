@@ -1,6 +1,10 @@
 import { FindOptions, ModelStatic, Model, Attributes } from 'sequelize';
 
-import DataLoaderManager, { ModelBatchLoadFn } from './dataLoaderManager';
+import DataLoaderManager, {
+  ModelBatchLoadFn,
+  DataLoaderManagerOptions,
+} from './dataLoaderManager';
+
 import { findRowByWhere, getWhereQuery } from './utils';
 import { FindUniqueOptions } from './types';
 
@@ -8,15 +12,17 @@ const noop = () => {
   return undefined;
 };
 
-interface MakeFindUniqueOptions {
-  onLoadBatch: (keys: ReadonlyArray<FindOptions<any>>) => void;
+export interface MakeFindUniqueOptions<ModelType extends Model> {
+  onLoadBatch?: (keys: ReadonlyArray<FindOptions<any>>) => void;
+  cache?: DataLoaderManagerOptions<ModelType>['cache'];
 }
 
 const makeFindUnique = <ModelType extends Model>(
   model: ModelStatic<ModelType>,
-  options?: MakeFindUniqueOptions,
+  options?: MakeFindUniqueOptions<ModelType>,
 ) => {
   const onLoadBatch = options?.onLoadBatch ?? noop;
+  const cache = options?.cache;
 
   const batchLoadFn: ModelBatchLoadFn<ModelType> = async (keys) => {
     onLoadBatch(keys);
@@ -36,7 +42,9 @@ const makeFindUnique = <ModelType extends Model>(
     );
   };
 
-  const manager = new DataLoaderManager<ModelType>(batchLoadFn);
+  const manager = new DataLoaderManager<ModelType>(batchLoadFn, {
+    cache,
+  });
 
   const findUnique = (
     queryOptions: FindUniqueOptions<Attributes<ModelType>>,
