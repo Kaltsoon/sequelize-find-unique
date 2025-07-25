@@ -214,3 +214,7 @@ export class User extends Model<
 
 User.findUnique = makeFindUnique(User);
 ```
+
+## License
+
+[MIT](./LICENSE)
